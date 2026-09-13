@@ -10,7 +10,7 @@ const test = require('node:test');
 const ROOT = path.resolve(__dirname, '..');
 const SOURCE = 'Agentchengfeng/chengfeng-videocut-skills';
 const ORIGIN = `https://github.com/${SOURCE}.git`;
-const RELEASE_PLUGIN_VERSION = '0.10.8';
+const RELEASE_PLUGIN_VERSION = '0.10.9';
 const RELEASE_CONTENT_REF = 'a513462f65b6f50083a20ac8da6ec3c32d2ddcde';
 const RELEASE_SNAPSHOT_REF = '1487e02b1c0c39ea74d079e8ce45da56bf59bc32';
 
@@ -36,7 +36,7 @@ function gitAtRoot(args) {
   return run('git', ['-C', ROOT, ...args]);
 }
 
-test('checked-in bootstrap pin binds the 0.10.8 content/provenance snapshot and leaves its plugin subtree unchanged', () => {
+test('checked-in bootstrap pin binds the 0.10.9 content/provenance snapshot and leaves its plugin subtree unchanged', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'installer-manifest.json'), 'utf8'));
   assert.equal(manifest.pluginRef, RELEASE_SNAPSHOT_REF);
   assert.equal(manifest.marketplaceRef, RELEASE_SNAPSHOT_REF);

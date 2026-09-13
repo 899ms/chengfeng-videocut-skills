@@ -46,7 +46,7 @@ function writeNodeExecutable(file, body) {
   return file;
 }
 
-function fakeRuntime(file, healthy = true, runtimeCapabilities = capabilities, version = "0.4.8") {
+function fakeRuntime(file, healthy = true, runtimeCapabilities = capabilities, version = "0.4.10") {
   const doctor = JSON.stringify({
     schemaVersion: 1,
     product: "chengfeng-videocut",
@@ -123,14 +123,14 @@ try {
     true,
   );
   fs.mkdirSync(path.join(desktopHome, "app", "current"), { recursive: true });
-  fs.writeFileSync(path.join(desktopHome, "app", "current", "VERSION"), "0.4.8\n");
+  fs.writeFileSync(path.join(desktopHome, "app", "current", "VERSION"), "0.4.10\n");
   fs.writeFileSync(
     path.join(desktopHome, "desktop-installation.json"),
     JSON.stringify({
       schemaVersion: 1,
       product: "chengfeng-videocut",
       source: "desktop",
-      productVersion: "0.4.8",
+      productVersion: "0.4.10",
     }),
   );
   const pathRuntimeDir = path.join(tmp, "path-runtime");
@@ -144,7 +144,7 @@ try {
   const desktopPayload = JSON.parse(desktopManaged.stdout);
   assert.equal(desktopPayload.runtime.kind, "desktop-managed");
   assert.equal(desktopPayload.runtime.command, desktopBin);
-  assert.equal(desktopPayload.runtime.runtimeVersion, "0.4.8");
+  assert.equal(desktopPayload.runtime.runtimeVersion, "0.4.10");
 
   const missing = run(["--json"], { CHENGFENG_VIDEOCUT_BIN: path.join(tmp, "missing") });
   assert.equal(missing.status, 10);
@@ -194,14 +194,14 @@ try {
   assert.equal(fs.existsSync(mustNotRun), false, "an existing incompatible Runtime must never be overwritten");
 
   const installHome = path.join(tmp, "installed-home");
-  const releaseDirectory = path.join(tmp, "release-v0.4.8");
+  const releaseDirectory = path.join(tmp, "release-v0.4.10");
   const observedReleaseBase = path.join(tmp, "observed-release-base");
   const releaseRuntimeDirectory = path.join(tmp, "release-runtime");
   fakeRuntime(
     path.join(releaseRuntimeDirectory, "chengfeng-videocut"),
     true,
     capabilities,
-    "0.4.8",
+    "0.4.10",
   );
   writeRelease(releaseDirectory, `
 const nodeFs = require("node:fs");
