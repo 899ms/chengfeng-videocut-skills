@@ -10,6 +10,10 @@ const { spawnSync } = require("node:child_process");
 const root = path.resolve(__dirname, "..");
 const ensure = path.join(root, "scripts", "ensure-runtime.cjs");
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "videocut-preflight-test-"));
+const isolatedPath = String(process.env.PATH || "")
+  .split(path.delimiter)
+  .filter((entry) => !entry.includes("chengfeng-videocut") && !entry.endsWith(`${path.sep}.local${path.sep}bin`))
+  .join(path.delimiter);
 const pluginManifest = JSON.parse(fs.readFileSync(path.join(root, ".codex-plugin", "plugin.json"), "utf8"));
 const packageManifest = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 const runtimeContract = JSON.parse(fs.readFileSync(path.join(root, "runtime-requirements.json"), "utf8"));
@@ -94,6 +98,7 @@ function run(args, env = {}) {
       ...process.env,
       CHENGFENG_VIDEOCUT_DIR: "",
       CHENGFENG_VIDEOCUT_HOME: path.join(tmp, "managed-default"),
+      PATH: isolatedPath,
       ...env,
     },
   });
@@ -214,10 +219,11 @@ nodeFs.cpSync(${JSON.stringify(releaseRuntimeDirectory)}, target, { recursive: t
     CHENGFENG_VIDEOCUT_BIN: "",
     CHENGFENG_VIDEOCUT_HOME: installHome,
     CHENGFENG_VIDEOCUT_RELEASE_BASE: `file://${releaseDirectory}`,
+    PATH: isolatedPath,
   });
   assert.equal(installed.status, 0, installed.stderr);
   assert.equal(JSON.parse(installed.stdout).installed, true);
-  assert.match(installed.stderr, /v0\.4\.8/);
+  assert.match(installed.stderr, new RegExp(runtimeContract.releaseTag.replace(".", "\\.")));
   assert.equal(fs.readFileSync(observedReleaseBase, "utf8"), `file://${releaseDirectory}`);
 
   const unavailableHome = path.join(tmp, "unavailable-home");
