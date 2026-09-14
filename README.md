@@ -31,7 +31,7 @@ node bin/install.cjs install
 node bin/install.cjs doctor
 ```
 
-发行 bootstrap 后，也可从该次发布的确切 40 位提交使用 GitHub npx；不要把上表 Plugin 快照当成本次 bootstrap 修复的提交。
+GitHub npx 的具体可用命令以该次 Release 回执中的实测结果为准。npm 10.9.2 在按完整提交进行 Git 打包时可能报 `GitFetcher requires an Arborist constructor`；这是引导获取失败，尚未安装 Plugin。可按 Release 给定的完整提交取得源码、核对 HEAD 后执行上面的 Node 命令；不要改用未锁定的 main/stable，也不要把上表 Plugin 快照当成本次 bootstrap 修复的提交。
 
 安装器只调用宿主支持的 Plugin 命令，并回读来源、克隆提交与安装状态。已存在同名或来源不明的安装会拒绝覆盖；不要先删除安装目录来绕过检查。它不准备或启动 Runtime。新任务能否发现 Skill 与 MCP，仍须分别验收，已有会话可能需要重新打开。
 
