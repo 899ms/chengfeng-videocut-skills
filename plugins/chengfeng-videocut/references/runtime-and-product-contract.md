@@ -27,12 +27,14 @@ ensure-runtime
                                       停止，不回退旧剪辑链
 ```
 
-- Plugin package `0.10.9` 消费的机器可读 Runtime compatibility contract 是 `runtime-requirements.json`：`releaseTag=v0.4.10`、`releaseVersion=0.4.10`、最低 Runtime 为 `0.4.10`，并声明 Runtime EDL、Studio 与跨平台用户服务能力集合。
-- 缺失时只从 `v0.4.10` 的精确 Release 下载 `install.cjs` 与 `SHA256SUMS.txt`；先校验安装器本身，并要求清单包含 stable `chengfeng-videocut-portable.tar.gz` 与版本化 `chengfeng-videocut-0.4.10-portable.tar.gz`。安装器只消费 stable portable tarball，不得下载 Desktop DMG/EXE；它收到同一个精确 Release 地址，不得访问 `latest`。
+- Plugin package `0.10.10` 消费的机器可读 Runtime compatibility contract 是 `runtime-requirements.json`：`releaseTag=v0.4.11`、`releaseVersion=0.4.11`、最低 Runtime 为 `0.4.10`，并声明 Runtime EDL、Studio 与跨平台用户服务能力集合。
+- 缺失时只从 `v0.4.11` 的精确 Release 下载 `install.cjs` 与 `SHA256SUMS.txt`；先校验安装器本身，并要求清单包含 stable `chengfeng-videocut-portable.tar.gz` 与版本化 `chengfeng-videocut-0.4.11-portable.tar.gz`。安装器只消费 stable portable tarball，不得下载 Desktop DMG/EXE；它收到同一个精确 Release 地址，不得访问 `latest`。
 - 桌面安装是另一条受支持的 Product 分发入口：App 首启把随包 Runtime、Bun、
   FFmpeg、FFprobe 写入相同受管根并执行同一个 `service ensure`。成功后只读探测
   返回 `kind=desktop-managed`；业务合同、CLI/API 和服务身份不变。
-- `v0.4.10` Release 尚不存在、缺少安装器、portable 资产校验值或哈希不符时，以 `install_failed` 停止；纯 CLI 路径不得转装公开旧版、源码 clone、npm、bunx、DMG 或 EXE。
+- `v0.4.11` Release 尚不存在、缺少安装器、portable 资产校验值或哈希不符时，以 `install_failed` 停止；纯 CLI 路径不得转装公开旧版、源码 clone、npm、bunx、DMG 或 EXE。
+- 本次 v0.4.11 是 CLI/portable 安装修复预发行，不生成新的 DMG/EXE。安装器自身需 Node 或已有 Bun 启动；缺 Bun 自动准备仅承诺已核验的 macOS arm64 固定官方资产及 SHA-256，写入产品私有依赖供持久启动入口复用，不修改全局 Bun 或 shell 配置。无匹配已核验资产即失败。
+- 本次前台 health/首页验证不代替常驻服务、Windows、媒体依赖、宿主加载或实际业务验收；下列既有服务与业务能力仍须单独过门禁。
 - 安装位置是 `CHENGFENG_VIDEOCUT_HOME` 或 `~/.chengfeng-videocut`。
 - CLI 已存在但 doctor 失败时不自动覆盖或循环重装；已有 Runtime 低于 0.4.10 时也不静默覆盖，只有用户明确确认 `--upgrade` 才原子替换程序目录。
 - CLI doctor 健康但版本低于 0.4.10，或缺少 EDL schema、expected revision、managed A-roll projection、move / trim / split / delete、service API、父进程独立存活或 crash restart capability 时，以 `runtime_capability_missing` 停止；不把“健康”误当“兼容”。
@@ -111,9 +113,9 @@ Product open 返回项目 URL
 ## 当前 Runtime 兼容门禁
 
 - 低于 0.4.10 的 Runtime 不具备本 Plugin 发布所绑定的完整更新事务与当前 EDL / Studio compatibility contract，必须被版本门禁拒绝，直到用户明确确认升级。
-- Runtime `v0.4.10` Release 必须先于 Plugin package `0.10.9` 发布，并至少包含 `install.cjs`、stable `chengfeng-videocut-portable.tar.gz`、版本化 `chengfeng-videocut-0.4.10-portable.tar.gz`、版本化/稳定名 tgz，以及覆盖这些资产和安装器的 `SHA256SUMS.txt`；桌面 DMG/EXE 不是 Skills 安装输入。
-- `v0.4.10` 必须提供正式原视频云端转录命令；缺少时以 `missing_cloud_transcription_adapter` 停止，禁止回退本地 ASR。
-- `v0.4.10` 必须内置可用 renderer；新版 Skill 不得把旧 renderer 重新打包。
+- Runtime `v0.4.11` Release 必须先于 Plugin package `0.10.10` 发布，并至少包含 `install.cjs`、stable `chengfeng-videocut-portable.tar.gz`、版本化 `chengfeng-videocut-0.4.11-portable.tar.gz`、版本化/稳定名 tgz，以及覆盖这些资产和安装器的 `SHA256SUMS.txt`；桌面 DMG/EXE 不是 Skills 安装输入。
+- `v0.4.11` 必须提供正式原视频云端转录命令；缺少时以 `missing_cloud_transcription_adapter` 停止，禁止回退本地 ASR。
+- `v0.4.11` 必须内置可用 renderer；新版 Skill 不得把旧 renderer 重新打包。
 - 没有 HyperFrames 顶层 `koubo` 视图或 capability manifest 的历史 Studio 必须被能力门禁拒绝，不能再作为审核界面回退。
 - 这些缺口不允许通过旧 8898/8899 页面、直接文件写入、旧任务面板或 Skill 私有导出器绕过。
 
@@ -255,8 +257,10 @@ plugin add
 
 ## 发布顺序
 
+以下为进入 stable 的完整门禁；本次安装修复只发行固定 A/B 快照与 bootstrap pin，不推进 stable。固定候选安装的前台验收不得写成已通过完整共用服务门禁。
+
 ```text
-Product 0.4.10 tag
+Product 0.4.11 tag
       |
       v
 Release assets + SHA256SUMS（含 install.cjs）
@@ -265,7 +269,7 @@ Release assets + SHA256SUMS（含 install.cjs）
 隔离环境首次安装 + doctor + Studio capability 验收
       |
       v
-Plugin 0.10.9 内容提交
+Plugin 0.10.10 内容提交
       |
       +------------------------------> contentRevision A
       |
@@ -281,4 +285,4 @@ Plugin 0.10.9 内容提交
 用户确认后固定安装 --ref B
 ```
 
-Plugin package 0.10.9 可以先形成候选，但在 Product Runtime v0.4.10 Release 的 portable 资产通过公开下载、安装和 Skills 共用服务验收之前不得推进 `stable`；这段空窗期的预期行为是安全失败，而不是安装旧 Runtime 或桌面安装包。
+Plugin package 0.10.10 可以先形成候选，但在 Product Runtime v0.4.11 Release 的 portable 资产通过公开下载、安装和 Skills 共用服务验收之前不得推进 `stable`；这段空窗期的预期行为是安全失败，而不是安装旧 Runtime 或桌面安装包。

@@ -40,7 +40,7 @@ $chengfeng-videocut:chengfeng-check-updates
 
 共同边界只存在于 `references/runtime-and-product-contract.md` 与 `references/business-workflow-contract.md`。普通 reference 没有 `SKILL.md`、公开 ID 或 UI 卡片，不占用用户入口。
 
-业务 Skill 共用 `scripts/ensure-runtime.cjs`、`scripts/ensure-running.cjs` 和 `runtime-requirements.json`。Plugin package `0.10.9` 消费 Runtime compatibility contract `0.4.10`：只接受 Runtime 0.4.10+ 与声明的 EDL、常驻 service 能力；缺失时从精确的 `v0.4.10` Release 获取 `install.cjs` 和校验清单。安装器只消费 stable Runtime portable `chengfeng-videocut-portable.tar.gz`；清单必须同时声明该资产和版本化 `chengfeng-videocut-0.4.10-portable.tar.gz`，不下载 Desktop DMG/EXE。校验后安装并执行 doctor。已有低版本 Runtime 只有在用户明确确认升级时才原子替换程序目录，项目数据不动。随后由 Product `service ensure --json` 幂等安装或恢复 macOS launchd / Windows Task Scheduler 用户服务；Plugin 不直接使用操作系统进程管理命令或 foreground 后台进程。Release 不存在、资产不完整或服务身份不匹配时安全停止。Studio 只在人工审核状态且通过 `ensure-studio.cjs` 顶层视图能力门禁后打开。
+业务 Skill 共用 `scripts/ensure-runtime.cjs`、`scripts/ensure-running.cjs` 和 `runtime-requirements.json`。Plugin package `0.10.10` 消费 Runtime compatibility contract `0.4.10`：只接受 Runtime 0.4.10+ 与声明的 EDL、常驻 service 能力；缺失时从精确的 `v0.4.11` Release 获取 `install.cjs` 和校验清单。安装器只消费 stable Runtime portable `chengfeng-videocut-portable.tar.gz`；清单必须同时声明该资产和版本化 `chengfeng-videocut-0.4.11-portable.tar.gz`，不下载 Desktop DMG/EXE。校验后安装并执行 doctor。已有低版本 Runtime 只有在用户明确确认升级时才原子替换程序目录，项目数据不动。随后由 Product `service ensure --json` 幂等安装或恢复 macOS launchd / Windows Task Scheduler 用户服务；Plugin 不直接使用操作系统进程管理命令或 foreground 后台进程。Release 不存在、资产不完整或服务身份不匹配时安全停止。Studio 只在人工审核状态且通过 `ensure-studio.cjs` 顶层视图能力门禁后打开。
 
 桌面 App 与纯 CLI 不是两套 Runtime。App 首次启动把随包 Runtime、Bun、FFmpeg 和
 FFprobe 安装到 `~/.chengfeng-videocut` 的版本化目录，并由同一个稳定 launcher
@@ -97,7 +97,9 @@ Marketplace/Plugin 后，先以 manifest 的 exact 40-hex ref 执行 Marketplace
 Plugin add；后续失败则按本次实际创建的状态执行 Plugin remove → Marketplace
 remove，并再次复读确认。
 
-Plugin 是独立的 `0.10.9` 版本；`runtime-requirements.json` 要求 Product Runtime `0.4.10`。两者不能互相替代。
+Plugin 是独立的 `0.10.10` 版本；`runtime-requirements.json` 将缺失时的下载固定到 Product Runtime `v0.4.11`，兼容下限仍为 `0.4.10`。两者不能互相替代。
+
+本次是 CLI/portable 安装修复预发行，不生成新的 DMG/EXE。安装器启动需要 Node 或已有 Bun；缺 Bun 的自动准备仅覆盖已核验的 macOS arm64 固定官方资产和 SHA-256，安装到产品私有依赖并由持久启动器复用。无可核验平台资产时明确失败，不修改全局 Bun 或 shell 配置。常驻服务能力仍是既有业务接入门禁，但本次前台启动验证不等于 launchd / Windows Task Scheduler、媒体依赖、宿主加载或完整剪辑已验收。
 
 ## 开发验证
 

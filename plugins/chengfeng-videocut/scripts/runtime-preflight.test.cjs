@@ -108,7 +108,8 @@ try {
   assert.equal(pluginManifest.version, packageManifest.version);
   assert.equal(runtimeContract.releaseTag, `v${runtimeContract.releaseVersion}`);
   assert.notEqual(pluginManifest.version, runtimeContract.releaseVersion, "Plugin package version is independent from Product Runtime release version");
-  assert.equal(runtimeContract.minimumRuntimeVersion, runtimeContract.releaseVersion, "the independent Plugin still declares its minimum compatible Runtime");
+  assert.equal(runtimeContract.minimumRuntimeVersion, "0.4.10", "an installation-only release preserves the healthy Runtime compatibility floor");
+  assert.equal(runtimeContract.releaseVersion, "0.4.11", "missing Runtime installs use the fixed installer repair release");
   assert.equal(runtimeContract.portableAsset, "chengfeng-videocut-portable.tar.gz");
   assert.equal(
     runtimeContract.versionedPortableAsset,
@@ -199,14 +200,14 @@ try {
   assert.equal(fs.existsSync(mustNotRun), false, "an existing incompatible Runtime must never be overwritten");
 
   const installHome = path.join(tmp, "installed-home");
-  const releaseDirectory = path.join(tmp, "release-v0.4.10");
+  const releaseDirectory = path.join(tmp, `release-${runtimeContract.releaseTag}`);
   const observedReleaseBase = path.join(tmp, "observed-release-base");
   const releaseRuntimeDirectory = path.join(tmp, "release-runtime");
   fakeRuntime(
     path.join(releaseRuntimeDirectory, "chengfeng-videocut"),
     true,
     capabilities,
-    "0.4.10",
+    runtimeContract.releaseVersion,
   );
   writeRelease(releaseDirectory, `
 const nodeFs = require("node:fs");
