@@ -1,43 +1,59 @@
 # chengfeng-videocut-skills
 
-Legacy repository — new users start at [chengfeng-videocut](https://github.com/Agentchengfeng/chengfeng-videocut).
+chengfeng-videocut 的公开 **Codex Plugin 安装入口**。软件本体 Runtime / Studio 的源码与发行产物在 [chengfeng-videocut](https://github.com/Agentchengfeng/chengfeng-videocut)。
 
-**这是旧版 Skills / Plugin 仓库。新版产品总入口已统一到 [chengfeng-videocut](https://github.com/Agentchengfeng/chengfeng-videocut)，请先读主仓的 [安装说明](https://github.com/Agentchengfeng/chengfeng-videocut/blob/main/INSTALL.md)。**
+Plugin 提供给 Agent 的方法和确认工具；Runtime 执行工程操作并提供工作台。安装 Plugin、准备 Runtime、完成视频是三件不同的事。本仓不是已经停用的链接页，也不是新的独立 Skills 全套下载器。
 
-本仓保留原网址、代码、已有版本与历史，不再维护另一套新的安装流程。此次调整是首页与导航迁移，不是自动替换软件，也不是合仓。
+## 本次安装修复候选
 
-## 三个仓库，三个职责
+Plugin **0.10.10** / bootstrap **0.5.2** 配套 Runtime **v0.4.11 CLI-only 预发行**。Runtime 安装包已公开；Plugin 使用下列内容提交与来源快照，发布与远端验收结果以对应 Release 回执为准。无 Bun 自动准备仅覆盖 macOS arm64 固定官方资产；其他平台、常驻服务与业务流程不在本次验证结论内。
 
-| 对象 | 职责 |
+### 本次固定身份
+
+| 对象 | 固定身份 |
 |---|---|
-| [chengfeng-videocut](https://github.com/Agentchengfeng/chengfeng-videocut) | 主产品：Runtime / Studio、总安装说明、组合版本清单与 Plugin 包装 |
-| [chengfeng-videocut-install](https://github.com/Agentchengfeng/chengfeng-videocut-install) | 安装与接入 Skill 的唯一方法来源；主产品引用，不另写一套 |
-| 本仓 chengfeng-videocut-skills | 旧版代码、版本与历史；引导旧链接用户到主仓 |
+| Plugin | 0.10.10 |
+| Plugin 内容提交 | `ea3b0e44c91f76a24065d9c5a3f95e3a68ad247f` |
+| 带来源回执的安装快照 | `442523b5570b77207ebbc9045b40db487e945e5d` |
+| 配套 Runtime | [v0.4.11](https://github.com/Agentchengfeng/chengfeng-videocut/releases/tag/v0.4.11) |
 
-其他业务 Skills 各自维护，最新入口与状态只查看 [主仓目录](https://github.com/Agentchengfeng/chengfeng-videocut/blob/main/INSTALL.md#独立-skills-源码预览)。这里不复制第二份组合版本表，也不把 install 合并回来。
+`installer-manifest.json` 同时固定 marketplaceRef 和 pluginRef；bootstrap 自己的提交与 Plugin 快照不是同一个概念。安装时不跟随 main/stable 漂移，也不重写已发布标签或同版本内容。
 
-## 新用户
+本次 bootstrap 修订单独形成发布提交；对应完整 SHA 由 [v0.10.10 预发行回执](https://github.com/Agentchengfeng/chengfeng-videocut-skills/releases/tag/v0.10.10) 提供，不把 Plugin 安装快照误当成 bootstrap 提交。`stable` 是可变发现入口，不能代替上表安装身份。**本轮不推进 stable**：常驻服务生命周期尚未完成新版本验收；本次仅按新候选的固定提交安装与复测，不宣称默认 stable 已修复。
 
-从 [主仓安装说明](https://github.com/Agentchengfeng/chengfeng-videocut/blob/main/INSTALL.md) 开始，选择所需能力。
+## 安装与检查
 
-截至 2026-09-13，六项独立 Skills 已有源码预览；**整套新版远端安装、匹配 Runtime 交付、宿主加载和完整业务验收尚未完成**。安装 install Skill 只得到安装方法及其包内工具，不代表工作台与所有业务包都已安装。不要把旧版本安装命令用于安装新版整套产品。
+前提：Node.js 18+、Git，以及已登录且支持 `codex plugin` 命令的 Codex CLI。先审阅取得的固定源码，再在该目录运行：
 
-## 已安装旧版的用户
+```sh
+node bin/install.cjs install --dry-run
+node bin/install.cjs install
+node bin/install.cjs doctor
+```
 
-- 已有 Plugin、安装器、版本清单和标签没有因本次首页更新而改变；旧命令仍可能执行旧版安装逻辑，不会自动跳成新安装器。
-- 原有版本继续通过固定标签或提交查阅。本次没有重打标签、发布新 Runtime、删除安装目录或自动卸载旧包。
-- 切换前先核对当前版本、来源、本地修改和同名 Skills；保留工程及用户数据，再按授权迁移。不要同时启用冲突的旧包与新版独立包。
-- 原有 Issue 继续保留，可继续在原问题下补充。新问题根据主仓或具体 Skill 的实际归属反馈；日志和媒体先脱敏。
+发行 bootstrap 后，也可从该次发布的确切 40 位提交使用 GitHub npx；不要把上表 Plugin 快照当成本次 bootstrap 修复的提交。
 
-## 历史说明
+安装器只调用宿主支持的 Plugin 命令，并回读来源、克隆提交与安装状态。已存在同名或来源不明的安装会拒绝覆盖；不要先删除安装目录来绕过检查。它不准备或启动 Runtime。新任务能否发现 Skill 与 MCP，仍须分别验收，已有会话可能需要重新打开。
 
-- [迁移前 README（固定提交 2e516119）](https://github.com/Agentchengfeng/chengfeng-videocut-skills/blob/2e51611965af6e6b8baea3bfc82995b5c9e8f5ef/README.md)
-- [已有 Releases](https://github.com/Agentchengfeng/chengfeng-videocut-skills/releases) · [已有标签](https://github.com/Agentchengfeng/chengfeng-videocut-skills/tags)
+Plugin 加载后，需要工作台时按包内 `references/runtime-and-product-contract.md` 和 `scripts/ensure-runtime.cjs` 准备固定配套 Runtime；以实际输出确认版本、能力和缺少的依赖。0.10.10 将缺失 Runtime 的下载固定到 v0.4.11；该 CLI 安装器仍需 Node 或已有 Bun 启动，随后可在 macOS arm64 从固定官方资产及 SHA-256 准备产品私有 Bun，并供持久启动入口复用，不修改全局 Bun 或 shell 配置。既有健康且能力满足要求的 0.4.10+ Runtime 可继续复用；不因此自动覆盖升级。媒体依赖、宿主加载、常驻服务与实际剪辑应分别验收；本次不提供新的 DMG/EXE。
 
-历史文档中的安装命令和兼容性结论仅对应其原版本，不代表新独立 Skills 的可用性。
+## 独立小黑 Skill 的兼容边界
 
-## License & attribution / 官方来源
+[chengfeng-videocut-xiaohei](https://github.com/Agentchengfeng/chengfeng-videocut-xiaohei) 独立维护动画方法及 ChatCut 适配；它不等于本 Plugin 内的历史画面方法。
 
-保留 [LICENSE](LICENSE)、[NOTICE.md](NOTICE.md) 与 [CITATION.cff](CITATION.cff)；迁移首页不改变原代码及第三方资源的许可和署名。
+独立小黑的新 Runtime 路线要求 >=0.5.9 以及 `workbench commands/connect`、`module publish/get`、`workbench visuals-put` 等实际接口。**Runtime 0.4.10 与本次 0.4.11 安装修复均不满足此合同。** 仅安装本 Plugin 不能宣称接通独立小黑，也不能反复重装或降低版本门槛绕过检查。
 
-维护者：**成峰 / AI产品自由**。官方 [GitHub](https://github.com/Agentchengfeng) · [X](https://x.com/chengfeng240928)。小红书、公众号、B站、抖音 / 视频号：AI产品自由。关注不是安装条件。
+已有 ChatCut 等合格工作台时沿用其可验证适配；需要新版 Runtime 路线时等待经过验证的配套发行或明确适配。用户明确只要独立动画时，可交付 HTML/SVG，不冒称已进入剪辑工程。
+
+## 仓库分工
+
+- 本仓：当前公开 Codex Plugin、固定安装入口、包内使用方法及来源回执。
+- [Runtime 主仓](https://github.com/Agentchengfeng/chengfeng-videocut)：软件源码、Studio、Runtime 安装与发行。
+- [安装与接入 Skill](https://github.com/Agentchengfeng/chengfeng-videocut-install)：独立安装方法与本地文件包工具；不是已经实现的远端全套安装事务。
+- 其他独立 Skills：各自维护和发布，兼容性逐项验证；不以本 Plugin 已启用代替全部独立包可用。
+
+## 历史与来源
+
+旧版本从 [Releases](https://github.com/Agentchengfeng/chengfeng-videocut-skills/releases) 或固定提交查看。历史说明、迁移规划与当前已验证的发行范围分开，不自动迁移用户工程或安装。
+
+保留 [LICENSE](LICENSE)、[NOTICE.md](NOTICE.md) 与 [CITATION.cff](CITATION.cff)。维护者：**成峰 / AI产品自由**。[GitHub](https://github.com/Agentchengfeng) · [X](https://x.com/chengfeng240928)。关注不是安装条件。
