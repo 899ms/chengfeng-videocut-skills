@@ -13,6 +13,7 @@ const publicSkills = [
   "chengfeng-export",
   "chengfeng-report-bug",
   "chengfeng-check-updates",
+  "chengfeng-videocut-workbench",
 ];
 const displayNames = {
   "chengfeng-cut": "chengfeng · 剪口播",
@@ -21,6 +22,7 @@ const displayNames = {
   "chengfeng-export": "chengfeng · 导出",
   "chengfeng-report-bug": "chengfeng · 上报 Bug",
   "chengfeng-check-updates": "chengfeng · 检查更新",
+  "chengfeng-videocut-workbench": "工作台操作",
 };
 const pluginManifest = JSON.parse(fs.readFileSync(path.join(root, ".codex-plugin", "plugin.json"), "utf8"));
 
@@ -36,17 +38,18 @@ for (const name of publicSkills) {
   assert.match(text, new RegExp(`^name: ${name}$`, "m"), `${name} must match its directory and frontmatter`);
   assert.match(name, /^chengfeng-/, `${name} must use the public chengfeng- prefix`);
   assert.notEqual(name, pluginName, "a raw Skill name must not shadow the Plugin root name");
-  assert.match(text, /^user-invocable: true$/m, `${name} must retain the host-compatible manual-selection metadata`);
+  if (name !== "chengfeng-videocut-workbench") assert.match(text, /^user-invocable: true$/m, `${name} must retain the host-compatible manual-selection metadata`);
 }
 
 for (const name of publicSkills) {
   const text = fs.readFileSync(path.join(root, "skills", name, "SKILL.md"), "utf8");
   assert.doesNotMatch(text, /\$SKILL_DIR|SKILL_DIR=/, `${name} must not require an injected SKILL_DIR`);
-  assert.ok(
+  if (name !== "chengfeng-videocut-workbench") assert.ok(
     /chengfeng-check-updates/.test(text) || /codex plugin list --json/.test(text),
     `${name} must reference the readiness check owned by chengfeng-check-updates`,
   );
   const agent = fs.readFileSync(path.join(root, "skills", name, "agents", "openai.yaml"), "utf8");
+  if (name === "chengfeng-videocut-workbench") assert.match(agent, /^  allow_implicit_invocation: true$/m, "canonical workbench metadata enables ordinary Skill discovery");
   assert.match(agent, new RegExp(`\\$${pluginName}:${name}`), `${name} must use its full Plugin namespace in the default prompt`);
   assert.match(agent, new RegExp(`^  display_name: "${displayNames[name]}"$`, "m"), `${name} must expose the searchable chengfeng display name`);
 }
@@ -83,9 +86,10 @@ assert.doesNotMatch(
   "internal references must not declare the retired Skill",
 );
 
-assert.deepEqual(fs.readdirSync(path.join(root, "skills")).sort(), publicSkills.slice().sort(), "only the six task-facing Skills may be discovered");
+assert.deepEqual(fs.readdirSync(path.join(root, "skills")).sort(), publicSkills.slice().sort(), "only the seven task-facing Skills may be discovered");
+require("./import-workbench-skill.cjs").verify(root);
 console.log(JSON.stringify({
-  sixTaskFacingSkills: true,
+  sevenTaskFacingSkills: true,
   pluginRootUnshadowed: true,
   pluginStarterPromptCap: true,
   namespacedDefaultPrompts: true,
