@@ -10,9 +10,9 @@ const test = require('node:test');
 const ROOT = path.resolve(__dirname, '..');
 const SOURCE = 'Agentchengfeng/chengfeng-videocut-skills';
 const ORIGIN = `https://github.com/${SOURCE}.git`;
-const RELEASE_PLUGIN_VERSION = '0.10.10';
-const RELEASE_CONTENT_REF = 'ea3b0e44c91f76a24065d9c5a3f95e3a68ad247f';
-const RELEASE_SNAPSHOT_REF = '442523b5570b77207ebbc9045b40db487e945e5d';
+const RELEASE_PLUGIN_VERSION = '0.10.11';
+const RELEASE_CONTENT_REF = 'd4580d8a0cef4fa34558b068945575d03e4c63ee';
+const RELEASE_SNAPSHOT_REF = '6d798efb9940946c994d1f3e59f8ff2ea7446c31';
 
 function run(command, args, options = {}) {
   const batch = process.platform === 'win32' && /^(npm|npx|pnpm|yarn)$/i.test(command)
@@ -36,7 +36,7 @@ function gitAtRoot(args) {
   return run('git', ['-C', ROOT, ...args]);
 }
 
-test('checked-in bootstrap pin binds the 0.10.10 content/provenance snapshot and leaves its plugin subtree unchanged', () => {
+test('checked-in bootstrap pin binds the 0.10.11 content/provenance snapshot and leaves its plugin subtree unchanged', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'installer-manifest.json'), 'utf8'));
   assert.equal(manifest.pluginRef, RELEASE_SNAPSHOT_REF);
   assert.equal(manifest.marketplaceRef, RELEASE_SNAPSHOT_REF);
@@ -74,11 +74,14 @@ test('checked-in bootstrap pin binds the 0.10.10 content/provenance snapshot and
   assert.ok(!plan.includes('1487e02b1c0c39ea74d079e8ce45da56bf59bc32'));
 });
 
-test('0.10.10 candidate fixes missing-runtime downloads without raising the healthy runtime floor', () => {
+test('0.10.11 adds the workbench method without changing the existing Runtime download contract', () => {
   const read = (relative) => JSON.parse(fs.readFileSync(path.join(ROOT, relative), 'utf8'));
-  assert.equal(read('package.json').version, '0.5.2');
-  assert.equal(read('plugins/chengfeng-videocut/package.json').version, '0.10.10');
-  assert.equal(read('plugins/chengfeng-videocut/.codex-plugin/plugin.json').version, '0.10.10');
+  assert.equal(read('package.json').version, '0.5.3');
+  assert.equal(read('plugins/chengfeng-videocut/package.json').version, '0.10.11');
+  assert.equal(read('plugins/chengfeng-videocut/.codex-plugin/plugin.json').version, '0.10.11');
+  const skillLock = read('plugins/chengfeng-videocut/workbench-skill.lock.json');
+  assert.equal(skillLock.commit, 'e9e78e0f3aefca1c38a1157817cc411e9757bb12');
+  assert.equal(skillLock.minimumRuntimeVersion, '0.5.9');
   const runtime = read('plugins/chengfeng-videocut/runtime-requirements.json');
   assert.equal(runtime.releaseVersion, '0.4.11');
   assert.equal(runtime.releaseTag, 'v0.4.11');
